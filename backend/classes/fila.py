@@ -4,6 +4,9 @@ class Fila:
     
     def enqueue(self, item) -> None:
         self._itens.append(item)
+
+    def inserir(self, item, indice: int) -> None:
+        self._itens.insert(indice, item)
     
     def vazia(self) -> bool:
         return len(self._itens) == 0
@@ -19,5 +22,3 @@ class Fila:
             return None
         
         return self._itens.pop(0)
-    
-    

@@ -1,5 +1,5 @@
 from pydantic import BaseModel, StringConstraints, ConfigDict
-from typing import Annotated, Literal
+from typing import Annotated, ClassVar, Literal
 
 class ClienteCreate(BaseModel):
     nome: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=255)]
@@ -11,7 +11,7 @@ class ClienteResponse(BaseModel):
     tipo: str
     posicao_fila: int
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config: ClassVar[ConfigDict] = ConfigDict(from_attributes=True)
 
 '''a = ClienteCreate(nome="João Silva", tipo="preferencial")
 print(a)
