@@ -4,6 +4,7 @@
 
 - Ana Clara Silvestre
 - Caio Victor Santos Valentim
+- Adilson Valtim de Almeida Júnior
 
 ## BACKEND 
 
