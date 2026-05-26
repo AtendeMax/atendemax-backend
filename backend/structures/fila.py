@@ -1,6 +1,6 @@
 class Fila:
     def __init__(self):
-        self._itens: []
+        self._itens = []
     
     def enqueue(self, item) -> None:
         self._itens.append(item)
