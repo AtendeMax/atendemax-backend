@@ -1,5 +1,5 @@
 from pydantic import BaseModel, field_validator
-from typing import Literal
+from typing import Literal, Optional
 
 
 class ClienteCreate(BaseModel):
@@ -12,6 +12,8 @@ class ClienteCreate(BaseModel):
         nome = valor.strip()
         if not nome:
             raise ValueError("Nome não pode ser vazio")
+        if len(nome) > 120:
+            raise ValueError("Nome deve ter no máximo 120 caracteres")
         return nome
 
 
@@ -19,9 +21,17 @@ class ClienteResponse(BaseModel):
     id: int
     nome: str
     tipo: str
-    posicao: int
+    status: str
+    posicao: Optional[int] = None
+    horario_inicio: Optional[str] = None
+    horario_conclusao: Optional[str] = None
 
 
 class FilaResponse(BaseModel):
     total: int
     clientes: list[ClienteResponse]
+
+
+class AcaoResponse(BaseModel):
+    message: str
+    cliente: Optional[ClienteResponse] = None
