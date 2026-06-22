@@ -115,9 +115,14 @@ def concluir_atendimento(cliente_id: int) -> None:
     fila_atual.remover_por_id(cliente_id)
 
 
+def _chave_data_hora(cliente: dict) -> str:
+    return cliente.get("horario_conclusao") or cliente.get("horario_inicio") or ""
+
+
 def obter_historico(
     tipo: str | None = None,
     status: str | None = None,
+    nome: str | None = None,
 ) -> FilaResponse:
     clientes_filtrados = historico
 
@@ -130,6 +135,21 @@ def obter_historico(
         clientes_filtrados = [
             cliente for cliente in clientes_filtrados if cliente["status"] == status
         ]
+
+    if nome is not None:
+        termo = nome.strip().lower()
+        if termo:
+            clientes_filtrados = [
+                cliente
+                for cliente in clientes_filtrados
+                if termo in cliente["nome"].lower()
+            ]
+
+    clientes_filtrados = sorted(
+        clientes_filtrados,
+        key=_chave_data_hora,
+        reverse=True,
+    )
 
     clientes = [_para_response(cliente) for cliente in clientes_filtrados]
     return FilaResponse(total=len(clientes), clientes=clientes)

@@ -91,8 +91,9 @@ def listar_historico(
     status_filtro: Optional[Literal["cancelado", "concluido"]] = Query(
         default=None, alias="status"
     ),
+    nome: Optional[str] = Query(default=None),
 ):
-    return obter_historico(tipo=tipo, status=status_filtro)
+    return obter_historico(tipo=tipo, status=status_filtro, nome=nome)
 
 
 if __name__ == "__main__":
