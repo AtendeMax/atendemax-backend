@@ -22,6 +22,13 @@ https://projetosana.atlassian.net/jira/software/projects/FLOW/boards/100/backlog
 
 ## PROJETO 03 — Sistema de Atendimento (Fila de Espera)
 
+### Etapa 04 — Busca e ordenação
+
+Funcionalidades implementadas no histórico (`GET /historico`):
+
+- **Ordenação por data e hora:** registros retornados do mais recente para o mais antigo, usando `sorted()` com `horario_conclusao` ou `horario_inicio`.
+- **Busca por nome:** filtro parcial via query string `?nome=...` (case-insensitive), integrado ao campo de filtro do frontend.
+
 ### Sobre
 
 O **AtendeMax** simula um sistema de atendimento com fila de espera. Este repositório contém o **backend** em Python, responsável por gerenciar a fila em memória usando a estrutura de dados **Fila (FIFO)**.
@@ -108,7 +115,7 @@ http://127.0.0.1:8000/docs
 | POST | `/fila/chamar` | Chama o próximo cliente da fila |
 | DELETE | `/clientes/{id}` | Cancela cliente aguardando |
 | POST | `/atendimentos/{id}/concluir` | Finaliza atendimento em andamento |
-| GET | `/historico` | Retorna atendimentos concluídos ou cancelados |
+| GET | `/historico` | Retorna histórico ordenado por data/hora, com filtros opcionais |
 
 ### Ciclo de vida do cliente
 
@@ -249,13 +256,25 @@ Erros comuns: **404** (fila vazia), **409** (já existe cliente em atendimento).
 
 ### Consultar histórico
 
+O histórico é retornado **ordenado por data e hora** (mais recente primeiro), usando `horario_conclusao` ou, na ausência dele, `horario_inicio`.
+
 **GET** `/historico`
 
 **GET** `/historico?tipo=preferencial`
 
 **GET** `/historico?status=concluido`
 
-**GET** `/historico?tipo=normal&status=cancelado`
+**GET** `/historico?nome=joao`
+
+**GET** `/historico?tipo=normal&status=cancelado&nome=maria`
+
+Filtros disponíveis:
+
+| Parâmetro | Descrição |
+|-----------|-----------|
+| `tipo` | `normal` ou `preferencial` |
+| `status` | `concluido` ou `cancelado` |
+| `nome` | Busca parcial por nome (sem diferenciar maiúsculas/minúsculas) |
 
 ```json
 {
@@ -290,6 +309,8 @@ curl -X POST http://127.0.0.1:8000/atendimentos/1/concluir \
   -H "Content-Type: application/json"
 
 curl "http://127.0.0.1:8000/historico?status=concluido"
+
+curl "http://127.0.0.1:8000/historico?nome=maria"
 ```
 
 ---
@@ -320,7 +341,8 @@ AtendeMax-backend/
 - POST `/fila/chamar` retorna 404 quando não há clientes aguardando
 - DELETE `/clientes/{id}` cancela cliente aguardando e move para histórico
 - POST `/atendimentos/{id}/concluir` finaliza atendimento com `horario_conclusao`
-- GET `/historico` retorna registros com filtros `tipo` e `status`
+- GET `/historico` retorna registros ordenados por data/hora (mais recente primeiro)
+- GET `/historico` aceita filtros `tipo`, `status` e busca por `nome`
 - Nome vazio retorna erro 422
 - Tipo inválido retorna erro 422
 - Swagger acessível em `/docs`
